@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: medium-blog-backend
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/medium-blog}
+  security:
+    user:
+      name: admin
+      password: admin
+  main:
+    allow-circular-references: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+jwt:
+  secret: ${JWT_SECRET:your-super-secret-jwt-key-that-is-at-least-512-bits-long-for-hs512-algorithm-security-requirements}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+logging:
+  level:
+    com.blog: DEBUG
+    org.springframework.security: DEBUG 

@@ -1,0 +1,27 @@
+{
+  "name": "medium-blog-platform",
+  "version": "1.0.0",
+  "description": "A Medium-like blogging platform with React frontend and Spring Boot backend",
+  "main": "migrate.js",
+  "scripts": {
+    "migrate": "node migrate.js",
+    "start": "./start.sh",
+    "stop": "./stop.sh"
+  },
+  "keywords": [
+    "blog",
+    "medium",
+    "react",
+    "spring-boot",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "mongodb": "^6.3.0",
+    "bcryptjs": "^2.4.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
