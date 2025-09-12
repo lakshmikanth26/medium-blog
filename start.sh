@@ -118,11 +118,24 @@ start_backend() {
     echo "🔧 Starting Spring Boot Backend..."
     cd backend
     
-    # Make Maven wrapper executable
-    chmod +x mvnw
+    # Determine which Maven command to use
+    MAVEN_CMD=""
+    if [ -d ".mvn/wrapper" ] && [ -f ".mvn/wrapper/maven-wrapper.jar" ]; then
+        echo "🔧 Using Maven wrapper..."
+        chmod +x mvnw
+        MAVEN_CMD="./mvnw"
+    elif command_exists mvn; then
+        echo "⚠️  Maven wrapper files missing, using system Maven..."
+        MAVEN_CMD="mvn"
+    else
+        echo "❌ Neither Maven wrapper nor system Maven is available!"
+        echo "Please install Maven or restore Maven wrapper files."
+        cd ..
+        return 1
+    fi
     
     # Start backend in background
-    ./mvnw spring-boot:run > ../backend.log 2>&1 &
+    $MAVEN_CMD spring-boot:run > ../backend.log 2>&1 &
     BACKEND_PID=$!
     echo $BACKEND_PID > ../backend.pid
     
