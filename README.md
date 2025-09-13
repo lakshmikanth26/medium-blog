@@ -2,6 +2,10 @@
 
 A full-stack blogging platform built with Spring Boot and React, featuring a modern Medium-like interface.
 
+
+& "C:\Program Files\Git\bin\bash.exe" start.sh
+
+
 ## ✨ Features
 
 ### 🔧 Backend (Spring Boot)
@@ -49,44 +53,11 @@ A full-stack blogging platform built with Spring Boot and React, featuring a mod
 ### Prerequisites
 
 - **Java 17+** (for Spring Boot backend)
-- **Node.js 16+** (for React frontend) 
+- **Node.js 18+** (for React frontend)
 - **MongoDB 6.0+** (database)
 - **npm** (Node Package Manager)
 
-### 🎯 First-Time Setup (Choose Your Platform)
-
-#### **Option A: Automatic Setup (Recommended)**
-
-##### **Windows Users**
-```cmd
-# Option 1: PowerShell (Recommended)
-.\setup.ps1
-
-# Option 2: Command Prompt  
-setup.bat
-
-# Option 3: With PowerShell options
-.\setup.ps1 -SkipTests          # Skip backend tests
-.\setup.ps1 -Verbose            # Show detailed logs
-.\setup.ps1 -Help               # Show help information
-```
-
-##### **Linux/macOS Users**
-```bash
-# Run the setup script
-./setup.sh
-```
-
-The setup scripts will:
-- ✅ Check all system prerequisites
-- ✅ Install and compile backend dependencies
-- ✅ Install frontend dependencies
-- ✅ Create environment configuration files
-- ✅ Set up database migration scripts
-- ✅ Create comprehensive error logs
-- ✅ Handle missing Maven wrapper files automatically
-
-#### **Option B: Manual Setup**
+### Quick Start (Recommended)
 
 1. **Clone the repository**
    ```bash
@@ -94,14 +65,30 @@ The setup scripts will:
    cd medium-blog
    ```
 
-2. **Run first-time setup** (choose your platform above)
+2. **Run initial setup (first time only)**
+   ```powershell
+   .\medium-blog.ps1 -Setup
+   ```
+   
+   The setup script will:
+   - Check all prerequisites (Java, Node.js, Maven, MongoDB)
+   - Install backend dependencies and compile
+   - Install frontend dependencies and build
+   - Verify everything is working
 
-3. **Access the application**
+3. **Start the application**
+   ```powershell
+   .\medium-blog.ps1 -Start
+   ```
+   
+   This will start both backend and frontend services.
+
+4. **Access the application**
    - 🌐 **Frontend**: http://localhost:3000
    - 🔧 **Backend API**: http://localhost:8080/api
    - 🗄️ **Database**: MongoDB on localhost:27017
 
-4. **Sample Login Credentials**
+5. **Sample Login Credentials**
    - Username: `john_doe` | Password: `demo123`
    - Username: `jane_smith` | Password: `demo123`
 
@@ -109,111 +96,63 @@ The setup scripts will:
 
 Before running the application, ensure MongoDB is running on localhost:27017:
 
-#### **Windows**
-```cmd
-# Option 1: Install MongoDB Community Server
-# Download from: https://www.mongodb.com/try/download/community
-# Follow the installation wizard
-
-# Option 2: Using winget
-winget install MongoDB.Server
-
-# Option 3: Docker
-docker run -d --name mongodb -p 27017:27017 mongo:6.0
-
-# Option 4: MongoDB Compass (GUI)
-# Download from: https://www.mongodb.com/products/compass
-```
-
-#### **macOS**
+**Option A: Homebrew (macOS)**
 ```bash
-# Option 1: Homebrew (Recommended)
 brew tap mongodb/brew
 brew install mongodb-community
 brew services start mongodb-community
-
-# Option 2: Docker
-docker run -d --name mongodb -p 27017:27017 mongo:6.0
 ```
 
-#### **Linux (Ubuntu/Debian)**
+**Option B: Docker**
 ```bash
-# Option 1: Official Package
-wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-sudo apt-get update
-sudo apt-get install -y mongodb-org
-sudo systemctl start mongod
-
-# Option 2: Docker
 docker run -d --name mongodb -p 27017:27017 mongo:6.0
 ```
 
-### Manual Setup (Alternative)
+**Option C: MongoDB Compass**
+- Download and install [MongoDB Compass](https://www.mongodb.com/products/compass)
+- Start the MongoDB service through Compass
 
-1. **Start MongoDB** (see options above)
-
-2. **Run Database Migration** (First time only)
-   ```bash
-   npm install
-   npm run migrate
-   ```
-
-3. **Start Backend**
-   ```bash
-   cd backend
-   ./mvnw spring-boot:run
-   ```
-
-4. **Start Frontend** (in another terminal)
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   ```
-
-### 🎮 Managing Services
-
-#### **Windows**
-```cmd
-# Start all services
-start.bat                    # Batch script
-# OR use the Unix-style scripts with Git Bash
-./start.sh
-
-# Stop all services  
-stop.bat                     # Forcefully stops all Java and Node processes
-./stop.sh                    # Unix-style (Git Bash)
-
-# Setup/Re-setup
-setup.bat                    # Batch script setup
-.\setup.ps1                  # PowerShell script (recommended)
-./setup.sh                   # Unix-style (Git Bash)
+**Option D: Local Installation**
+```bash
+mongod --dbpath /usr/local/var/mongodb
 ```
 
-#### **Linux/macOS**
-```bash  
-# Start all services (with migration on first run)
-./start.sh
+### Alternative Commands
 
-# Stop all services
-./stop.sh
+**Using the unified script:**
+```powershell
+# Show help and available commands
+.\medium-blog.ps1 -Help
 
-# First-time setup or re-setup
-./setup.sh
+# Run initial setup (first time only)
+.\medium-blog.ps1 -Setup
 
-# Run only database migration
+# Start both backend and frontend
+.\medium-blog.ps1 -Start
+
+# Start only backend
+.\medium-blog.ps1 -Backend
+
+# Start only frontend
+.\medium-blog.ps1 -Frontend
+```
+
+**Manual setup (if needed):**
+```powershell
+# 1. Start MongoDB (see options above)
+
+# 2. Run Database Migration (First time only)
+npm install
 npm run migrate
-```
 
-#### **Cross-Platform Options**
-```bash
-# Manual backend start
-cd backend && ./mvnw spring-boot:run    # Linux/macOS
-cd backend && mvnw.cmd spring-boot:run  # Windows
+# 3. Start Backend
+cd backend
+mvn spring-boot:run
 
-# Manual frontend start  
-cd frontend && npm start                # All platforms
+# 4. Start Frontend (in another terminal)
+cd frontend
+npm install
+npm start
 ```
 
 ## 📁 Project Structure
@@ -240,14 +179,8 @@ medium-blog/
 │   └── package.json
 ├── migrate.js               # Database migration script
 ├── package.json             # Migration dependencies
-├── start.sh                 # Start all services (Unix/Linux/macOS)
-├── stop.sh                  # Stop all services (Unix/Linux/macOS)
-├── setup.sh                 # First-time setup (Unix/Linux/macOS)
-├── start.bat                # Start all services (Windows)
-├── stop.bat                 # Stop all services (Windows)  
-├── setup.bat                # First-time setup (Windows Batch)
-├── setup.ps1                # First-time setup (Windows PowerShell)
-├── .env.example             # Environment configuration template
+├── start.sh                 # Start all services
+├── stop.sh                  # Stop all services
 └── README.md
 ```
 
@@ -349,105 +282,57 @@ REACT_APP_API_URL=http://localhost:8080/api
 ### Common Issues
 
 1. **MongoDB Connection Failed**
-   - **Windows**: Check if MongoDB service is running in Services.msc
-   - **macOS**: Try `brew services restart mongodb-community`
-   - **Linux**: Try `sudo systemctl start mongod`
-   - **Docker**: `docker start mongodb`
+   - Ensure MongoDB is running on port 27017
+   - Check if MongoDB service is started
+   - Try: `brew services restart mongodb-community`
 
 2. **Port Already in Use**
-   - **Backend (8080)**: Stop existing Spring Boot applications
-     - Windows: Check Task Manager for Java processes
-     - Unix: `lsof -i :8080` then `kill <PID>`
-   - **Frontend (3000)**: Stop existing React servers
-     - Windows: Check Task Manager for Node processes  
-     - Unix: `lsof -i :3000` then `kill <PID>`
+   - Backend (8080): Stop any existing Spring Boot applications
+   - Frontend (3000): Stop any existing React development servers
+   - MongoDB (27017): Check for existing MongoDB instances
 
-3. **Setup Script Fails**
-   - Check logs in `logs/` directory:
-     - `logs/setup.log` - Complete setup log
-     - `logs/setup-error.log` - Error messages only
-     - `logs/setup-backend.log` - Backend compilation
-     - `logs/setup-frontend.log` - Frontend installation
-   - **Windows**: Try running as Administrator
-   - **PowerShell**: Try `Set-ExecutionPolicy RemoteSigned` if script won't run
+3. **Migration Failed**
+   - Ensure MongoDB is running before running migration
+   - Check Node.js version (recommended 18+)
+   - Verify npm install completed successfully
 
-4. **Java/Maven Issues** 
+4. **Backend Won't Start**
    - Check Java version: `java -version` (needs 17+)
-   - **Maven wrapper missing**: Setup scripts automatically recreate them
-   - **Windows**: Use `mvnw.cmd` instead of `./mvnw`
+   - View logs: `tail -f backend.log`
+   - Verify MongoDB connection
 
-5. **Node.js/npm Issues**
-   - Check Node.js version: `node -v` (needs 16+) 
-   - Clear cache: `npm cache clean --force`
-   - **Windows**: Clear node_modules: `rmdir /s frontend\node_modules`
-   - **Unix**: `rm -rf frontend/node_modules && cd frontend && npm install`
+5. **Frontend Won't Start**
+   - Check Node.js version: `node -v` (needs 18+)
+   - Clear node_modules: `rm -rf frontend/node_modules && cd frontend && npm install`
+   - View logs: `tail -f frontend.log`
 
-### 📋 Log Files & Debugging
+### Useful Commands
 
-#### **Windows**
-```cmd
-# View logs (PowerShell)
-Get-Content logs\setup.log -Tail 20
-Get-Content logs\setup-error.log
+```powershell
+# Check service status and start services
+.\medium-blog.ps1 -Start     # Start both services
+.\medium-blog.ps1 -Backend   # Start backend only
+.\medium-blog.ps1 -Frontend  # Start frontend only
 
-# Check running processes
-tasklist | findstr java
-tasklist | findstr node
+# Check if services are running
+netstat -an | findstr :3000   # Frontend
+netstat -an | findstr :8080   # Backend
+netstat -an | findstr :27017  # MongoDB
 
-# Check ports
-netstat -an | findstr :8080
-netstat -an | findstr :3000
-netstat -an | findstr :27017
-```
+# Test API endpoints
+Invoke-WebRequest -Uri "http://localhost:8080/api/posts" -UseBasicParsing
+Invoke-WebRequest -Uri "http://localhost:3000" -UseBasicParsing
 
-#### **Linux/macOS**  
-```bash
-# View real-time logs
-tail -f logs/setup.log      # Complete setup log
-tail -f logs/setup-error.log # Error messages only
-
-# Check if services are running  
-lsof -i :3000         # Frontend
-lsof -i :8080         # Backend
-lsof -i :27017        # MongoDB
-
-# Process management
-ps aux | grep java    # Backend processes
-ps aux | grep node    # Frontend processes
-```
-
-### 🔧 Clean Restart Process
-
-#### **Windows**
-```cmd
-# Complete clean restart
-stop.bat
-rmdir /s /q logs
-setup.bat
-start.bat
-```
-
-#### **Linux/macOS**
-```bash  
-# Complete clean restart
-./stop.sh
-rm -rf logs .migration_completed
-./setup.sh
-./start.sh
+# Clean restart
+# Stop services with Ctrl+C, then restart
+.\medium-blog.ps1 -Start
 ```
 
 ## 🎉 What's New
 
-### Recent Updates
-- ✅ **Full Windows Support**: Comprehensive Windows setup with `.bat` and `.ps1` scripts
-- ✅ **Enhanced Error Logging**: Detailed logs in `logs/` directory for debugging
-- ✅ **Cross-Platform Setup**: Automated first-time setup for Windows, macOS, and Linux
-- ✅ **Maven Wrapper Recovery**: Automatically recreates missing Maven wrapper files
-- ✅ **Better Prerequisites Checking**: Validates Java, Node.js, npm, and MongoDB before setup
-- ✅ **Improved Documentation**: Platform-specific instructions and troubleshooting
-
-### Previous Updates  
-- ✅ **Removed Docker Compose**: Simplified setup with direct local development
+- ✅ **Unified Script**: Single `medium-blog.ps1` script for setup and starting
+- ✅ **Simplified Commands**: Easy-to-use PowerShell commands for all operations
+- ✅ **Automatic Prerequisites Check**: Validates Java, Node.js, Maven, and MongoDB
 - ✅ **Database Migration**: Automatic database setup with sample data
 - ✅ **Read Count Tracking**: Stories automatically track view counts
 - ✅ **Better Error Messages**: Specific login error feedback
@@ -460,33 +345,4 @@ MIT License - see LICENSE file for details.
 
 ---
 
-## 🚀 Quick Start Summary
-
-### **First Time Setup**
-```cmd
-# Windows users (choose one):
-setup.bat           # Batch script  
-.\setup.ps1         # PowerShell (recommended)
-
-# Linux/macOS users:
-./setup.sh          # Bash script
-```
-
-### **Start Application**
-```cmd
-# Windows:
-start.bat           # Batch script
-./start.sh          # Git Bash
-
-# Linux/macOS:
-./start.sh          # Bash script
-```
-
-### **Access Your Blog**
-- 🌐 **Frontend**: http://localhost:3000
-- 🔧 **Backend**: http://localhost:8080/api
-- 👤 **Login**: `john_doe` / `demo123`
-
----
-
-🚀 **Ready to start blogging!** Choose your platform setup above and visit http://localhost:3000
+🚀 **Ready to start blogging!** Run `./start.sh` and visit http://localhost:3000
