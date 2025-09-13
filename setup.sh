@@ -13,18 +13,39 @@ NC='\033[0m' # No Color
 # Function to print colored output
 print_status() {
     echo -e "${BLUE}ℹ️  $1${NC}"
+    log_message "INFO" "$1"
 }
 
 print_success() {
     echo -e "${GREEN}✅ $1${NC}"
+    log_message "SUCCESS" "$1"
 }
 
 print_warning() {
     echo -e "${YELLOW}⚠️  $1${NC}"
+    log_message "WARNING" "$1"
 }
 
 print_error() {
     echo -e "${RED}❌ $1${NC}"
+    log_message "ERROR" "$1"
+}
+
+log_message() {
+    local level=$1
+    local message=$2
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    
+    # Ensure logs directory exists
+    mkdir -p logs
+    
+    # Write to main log file
+    echo "[$timestamp] $level: $message" >> logs/setup.log
+    
+    # Write errors to separate error log
+    if [ "$level" = "ERROR" ]; then
+        echo "[$timestamp] ERROR: $message" >> logs/setup-error.log
+    fi
 }
 
 # Function to check if a command exists
@@ -174,21 +195,30 @@ else
 fi
 
 print_status "Installing backend dependencies and compiling with $MAVEN_CMD..."
-if $MAVEN_CMD clean compile > ../setup-backend.log 2>&1; then
+if $MAVEN_CMD clean compile > ../logs/setup-backend.log 2>&1; then
     print_success "Backend dependencies installed and compiled successfully"
 else
-    print_error "Backend setup failed! Check setup-backend.log for details."
-    echo "Last few lines of the error log:"
-    tail -n 10 ../setup-backend.log
+    print_error "Backend setup failed! Check logs/setup-backend.log for details."
+    echo ""
+    echo "Last 10 lines of the error:"
+    echo "================================"
+    tail -n 10 ../logs/setup-backend.log
+    echo "================================"
+    echo "Full log available at: logs/setup-backend.log"
+    echo ""
+    # Copy error to main error log
+    cat ../logs/setup-backend.log >> ../logs/setup-error.log
     exit 1
 fi
 
 print_status "Running tests to ensure everything is working..."
-if $MAVEN_CMD test > ../setup-backend-test.log 2>&1; then
+if $MAVEN_CMD test > ../logs/setup-backend-test.log 2>&1; then
     print_success "Backend tests passed successfully"
 else
-    print_warning "Some backend tests failed. Check setup-backend-test.log for details."
+    print_warning "Some backend tests failed. Check logs/setup-backend-test.log for details."
     echo "This might be normal if MongoDB is not running yet."
+    echo "Last few lines of test output:"
+    tail -n 5 ../logs/setup-backend-test.log
 fi
 
 cd ..
@@ -203,18 +233,36 @@ cd frontend || {
 }
 
 print_status "Installing frontend dependencies..."
-if npm install > ../setup-frontend.log 2>&1; then
+if npm install > ../logs/setup-frontend.log 2>&1; then
     print_success "Frontend dependencies installed successfully"
 else
-    print_error "Frontend setup failed! Check setup-frontend.log for details."
+    print_error "Frontend setup failed! Check logs/setup-frontend.log for details."
+    echo ""
+    echo "Last 10 lines of the error:"
+    echo "================================"
+    tail -n 10 ../logs/setup-frontend.log
+    echo "================================"
+    echo "Full log available at: logs/setup-frontend.log"
+    echo ""
+    # Copy error to main error log
+    cat ../logs/setup-frontend.log >> ../logs/setup-error.log
     exit 1
 fi
 
 print_status "Building frontend to verify setup..."
-if npm run build > ../setup-frontend-build.log 2>&1; then
+if npm run build > ../logs/setup-frontend-build.log 2>&1; then
     print_success "Frontend built successfully"
 else
-    print_error "Frontend build failed! Check setup-frontend-build.log for details."
+    print_error "Frontend build failed! Check logs/setup-frontend-build.log for details."
+    echo ""
+    echo "Last 10 lines of the error:"
+    echo "================================"
+    tail -n 10 ../logs/setup-frontend-build.log
+    echo "================================"
+    echo "Full log available at: logs/setup-frontend-build.log"
+    echo ""
+    # Copy error to main error log
+    cat ../logs/setup-frontend-build.log >> ../logs/setup-error.log
     exit 1
 fi
 
@@ -259,8 +307,11 @@ if [ -f "migrate.js" ]; then
     # Install migration dependencies if package.json exists at root
     if [ -f "package.json" ]; then
         print_status "Installing migration dependencies..."
-        npm install --silent
-        print_success "Migration dependencies installed"
+        if npm install --silent > logs/setup-migration.log 2>&1; then
+            print_success "Migration dependencies installed"
+        else
+            print_warning "Failed to install migration dependencies - check logs/setup-migration.log"
+        fi
     fi
     
     # Make migration script executable
@@ -279,13 +330,11 @@ echo "------------------------"
 # Make scripts executable
 chmod +x start.sh stop.sh setup.sh
 
-# Create logs directory if it doesn't exist
+# Ensure logs directory exists
 mkdir -p logs
 
-# Clean up setup logs
-rm -f setup-backend.log setup-frontend.log setup-backend-test.log setup-frontend-build.log
-
 print_success "All scripts are now executable"
+print_success "Logs directory created"
 
 echo ""
 echo "🎉 Setup Complete!"
@@ -313,14 +362,27 @@ echo "     🌐 Frontend: http://localhost:3000"
 echo "     🔧 Backend API: http://localhost:8080/api"
 echo ""
 echo "📝 Available commands:"
-echo "  ./start.sh  - Start both backend and frontend"
-echo "  ./stop.sh   - Stop all services"
-echo "  ./setup.sh  - Run this setup again (if needed)"
+echo "  Unix/Linux/macOS:"
+echo "    ./start.sh  - Start both backend and frontend"
+echo "    ./stop.sh   - Stop all services"
+echo "    ./setup.sh  - Run this setup again (if needed)"
+echo ""
+echo "  Windows:"
+echo "    setup.bat   - Windows batch setup script"
+echo "    setup.ps1   - PowerShell setup script"
 echo ""
 echo "📚 Sample Login Credentials (created on first run):"
 echo "  Username: john_doe | Password: demo123"
 echo "  Username: jane_smith | Password: demo123"
 echo ""
+echo "📋 Log files location: logs/ directory"
+echo "  - setup.log           : Complete setup log"
+echo "  - setup-error.log     : Error messages only"
+echo "  - setup-backend.log   : Backend compilation log"
+echo "  - setup-frontend.log  : Frontend installation log"
+echo ""
 print_warning "Note: The database will be initialized with sample data on first run."
 echo ""
 print_success "Happy coding! 🚀"
+echo ""
+log_message "INFO" "Setup completed successfully at $(date)"
