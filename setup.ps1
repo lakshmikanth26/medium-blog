@@ -105,7 +105,7 @@ function Get-JavaVersion {
 }
 
 function Show-Help {
-    Write-ColoredText @"
+    $helpText = @"
 🎯 Medium Blog Platform - Windows PowerShell Setup Script
 
 USAGE:
@@ -128,7 +128,8 @@ REQUIREMENTS:
     - MongoDB (local or Docker)
 
 For more information, visit: https://github.com/lakshmikanth26/medium-blog
-"@ -Color "Cyan"
+"@
+    Write-ColoredText $helpText -Color "Cyan"
 }
 
 # Show help if requested
